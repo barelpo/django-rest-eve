@@ -1,7 +1,9 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+import datetime
 
 # Create your models here.
+
 
 class Actor(models.Model):
 
@@ -42,7 +44,6 @@ class Rating(models.Model):
                                        validators=[MinValueValidator(1), MaxValueValidator(10)])
     rating_date = models.DateField(db_column='rating_date', null=False, auto_now_add=True)
 
-
     class Meta:
         db_table = 'ratings'
 
@@ -56,6 +57,19 @@ class MovieActor(models.Model):
     def __str__(self):
         return f"{self.actor.name} in movie {self.movie.name}"
 
-
     class Meta:
         db_table = 'movie_actors'
+
+
+class Oscars(models.Model):
+    actor = models.ForeignKey(Actor, on_delete=models.CASCADE, null=True, blank=True)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    nomination_type = models.CharField(max_length=128)
+    year_awarded = models.IntegerField(validators=[MaxValueValidator(datetime.date.today().year)])
+    unique_together = ['movie', 'actor', 'nomination_type']
+
+    class Meta:
+        db_table = 'oscars'
+
+
+

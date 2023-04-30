@@ -16,20 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from movies_rest_app.auth.views import get_all_users, UserViewSet
+from movies_rest_app import views
+from movies_rest_app.oscar_views_set import OscarViewSet
 
-router_user = routers.DefaultRouter()
-router_user.register(r'api/auth/user', UserViewSet)
+router_oscar = routers.DefaultRouter()
+router_oscar.register(r'oscars', OscarViewSet)
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/imdb/', include('movies_rest_app.urls')),
-    path('api/auth/login', TokenObtainPairView.as_view()),
-    path('api/auth/refresh', TokenRefreshView.as_view()),
-    path('api/auth/users', get_all_users)
+    path('movies/', views.movies),
+    path('actors/', views.actors),
+    path('movie/<int:movie_id>/actors', views.get_actors_by_movie),
+    path('actor/<int:actor_id>', views.actor),
+    path('movie/<int:movie_id>/actor/<int:actor_id>', views.actor_by_movie),
+    # path('movies/<movie_id>/oscars/', views.oscar)
 ]
-urlpatterns.extend(router_user.urls)
-
-
+urlpatterns.extend(router_oscar.urls)
